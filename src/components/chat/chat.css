@@ -1,0 +1,204 @@
+.chat {
+    flex: 2;
+    border-left: 1px solid #dddddd35;
+    border-right: 1px solid #dddddd35;
+
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .top {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #dddddd35;
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+
+            .texts {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+
+                span {
+                    font-size: 18px;
+                    font-weight: bold;
+                }
+
+                p {
+                    font-size: 14px;
+                    font-weight: 300;
+                    color: #a5a5a5;
+                }
+            }
+        }
+
+        .icons {
+            display: flex;
+            gap: 20px;
+
+            img {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    }
+
+    .center {
+        padding: 20px;
+        flex: 1;
+        overflow-y: scroll;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+
+        
+
+        scrollbar-width: thin;
+        scrollbar-color: #fefefe rgba(17, 25, 40, 0.3);
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: rgba(17, 25, 40, 0.3);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #fefefe;
+            border-radius: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: #fefefe;
+        }
+
+        .message {
+            max-width: 90%;
+            display: flex;
+            gap: 20px;
+            align-self: flex-start;
+
+            &.own {
+                align-self: flex-end;
+                flex-direction: row-reverse;
+                text-align: right;
+
+                .texts {
+                    p {
+                        background-color: #5183fe;
+                        color: white;
+                        border-radius: 10px 10px 0 10px;
+                    }
+                }
+            }
+
+            img {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+
+            .texts {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+
+                small {
+                    font-size: 12px;
+                    color: gray;
+                }
+
+                img {
+                    width: 100%;
+                    height: 300px;
+                    border-radius: 10px;
+                    object-fit: cover;
+                }
+
+                p {
+                    padding: 10px;
+                    background-color: #dddddd30;
+                    border-radius: 10px;
+                    max-width: 400px;
+                    word-wrap: break-word;
+                }
+
+                span {
+                    font-size: 13px;
+                }
+            }
+        }
+    }
+
+    .bottom {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top: 1px solid #dddddd35;
+        gap: 20px;
+        margin-top: auto;
+
+        .icons {
+            display: flex;
+            gap: 20px;
+        }
+
+        img {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        input {
+            flex: 1;
+            background-color: rgba(17, 25, 40, 0.5);
+            border: none;
+            outline: none;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .emoji {
+            position: relative;
+
+            .picker {
+                position: absolute;
+                bottom: 50px;
+                left: 0;
+            }
+        }
+
+        .sendButton {
+            background-color: #e0f0ff;
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: rgb(123, 72, 72);
+                color: white;
+            }
+        }
+    }
+}
