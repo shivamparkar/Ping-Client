@@ -27,7 +27,6 @@ const Login = () => {
     }
 
     const handleLogin = async (e) => {
-        debugger;
         e.preventDefault()
         try {
             await authenticate(credentials);
@@ -39,7 +38,6 @@ const Login = () => {
 
 
     const createUser = async (e) => {
-        debugger
         e.preventDefault();
 
         const formData = new FormData();

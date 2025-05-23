@@ -7,7 +7,6 @@ const useAuth = () => {
   const { login, register, logout } = useAuthStore();
 
   const authenticate = async (credentials) => {
-    debugger;
     try {
       const response = await apiClient.post('/api/auth/login', credentials);
     

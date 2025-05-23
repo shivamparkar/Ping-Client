@@ -11,6 +11,8 @@ const Details = () => {
 
   const handleLogout = () => {
     logoutUser();
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     window.location.href = '/login';
   };
 
