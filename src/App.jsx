@@ -19,8 +19,9 @@ const App = () => {
     const storedUser = localStorage.getItem('user');
     if (token && storedUser) {
       login(JSON.parse(storedUser)); 
+      initializeSocket();
     }
-    initializeSocket();
+    
   }, [login]);
 
   
