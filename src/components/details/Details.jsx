@@ -1,6 +1,7 @@
 import React from 'react'
 import './details.css';
 import useAuth from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const Details = () => {
 
