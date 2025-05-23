@@ -105,7 +105,7 @@ const ChatList = () => {
       })} */}
 
       {loading ? (
-  // Show 5 skeleton items as placeholder
+  
   [...Array(5)].map((_, idx) => (
     <div key={idx} className="item skeleton-item">
       <Skeleton circle={true} height={50} width={50} />
