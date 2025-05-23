@@ -4,7 +4,7 @@ import EmojiPicker from 'emoji-picker-react';
 import useSocketStore from '../../stores/socketStore';
 import useChatStore from "../../stores/chatStore";
 import useChats from '../../hooks/useChats';
-import CameraCapture from '../camera/cameracapture';
+import CameraCapture from '../camera/CameraCapture';
 import VideoCall from '../videoCall/VideoCall';
 
 const Chat = () => {
