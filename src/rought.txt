@@ -1,276 +1,46 @@
-import React, { useEffect, useState, useRef } from 'react';
-import './chat.css';
-import EmojiPicker from 'emoji-picker-react';
-import useSocketStore from '../../stores/socketStore';
-import useChatStore from "../../stores/chatStore";
-import useChats from '../../hooks/useChats';
-import CameraCapture from '../camera/cameracapture';
-
-const Chat = () => {
-  const { socket, initializeSocket } = useSocketStore();
-  const { fetchMessages } = useChats();
-  const { messages, addMessage } = useChatStore();
-  const selectedChat = useChatStore(state => state.selectedChat);
-  const [videoCallActive, setVideoCallActive] = useState(false);
+import Chat from "./components/chat/Chat";
+import Details from "./components/details/Details"
+import List from "./components/list/List";
+import Login from "./components/login/Login";
+import Notification from "./components/notfication/Notfication";
+import useAuthStore from "./stores/authStore";
+import useSocketStore from "./stores/socketStore";
+import React, { useEffect } from 'react';
 
 
-  const [cameraOpen, setCameraOpen] = useState(false);
-  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
-  const [text, setText] = useState("");
-  const endRef = useRef(null);
-  const fileInputRef = useRef(null);
+const App = () => {
 
-  const loggedInUser = JSON.parse(localStorage.getItem('user'));
+  const {  isAuthenticated, login } = useAuthStore();
+  const { initializeSocket } = useSocketStore();
 
-  // Initialize socket on mount
+
   useEffect(() => {
-    if (loggedInUser?._id) {
-      initializeSocket(loggedInUser);
+    const token = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+    if (token && storedUser) {
+      login(JSON.parse(storedUser)); 
+      initializeSocket();
     }
-  }, [initializeSocket, loggedInUser]);
+    
+  }, [login]);
 
-  // Fetch messages when chat changes
-  useEffect(() => {
-    if (selectedChat?._id) {
-      fetchMessages(selectedChat._id);
-    }
-  }, [selectedChat?._id, fetchMessages]);
-
-  // Listen for incoming messages
-  useEffect(() => {
-    if (!socket) return;
-
-    const receiveMessage = (message) => {
-      const normalizedMessage = {
-        ...message,
-        senderId: message.senderId || message.senderID,
-        receiverId: message.receiverId || message.receiverID,
-      };
-
-      const chatMessages = useChatStore.getState().messages[normalizedMessage.chatId] || [];
-
-      const alreadyExists = chatMessages.some(
-        (msg) =>
-          msg._id === normalizedMessage._id ||
-          (msg.text === normalizedMessage.text && msg.senderId === normalizedMessage.senderId)
-      );
-
-      if (!alreadyExists && !normalizedMessage._id.startsWith("temp-")) {
-        addMessage(normalizedMessage.chatId, normalizedMessage);
-      }
-    };
-
-    socket.on('receiveMessage', receiveMessage);
-    return () => socket.off('receiveMessage', receiveMessage);
-  }, [socket, addMessage]);
-
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages[selectedChat?._id]?.length]);
-
-  const otherUser = selectedChat?.participants?.find(p => p._id !== loggedInUser?._id);
-
-  // Handlers
-  const handleEmojiClick = (e) => {
-    setText(prev => prev + e.emoji);
-    setEmojiPickerOpen(false);
-  };
-
-  const handleSend = () => {
-    if (!text.trim() || !selectedChat?._id) return;
-
-    const tempId = "temp-" + Date.now();
-    const receiverId = otherUser?._id;
-
-    const message = {
-      _id: tempId,
-      chatId: selectedChat._id,
-      senderId: loggedInUser._id,
-      receiverId,
-      text,
-      image: "",
-      createdAt: new Date().toISOString(),
-      status: "sending",
-    };
-
-    addMessage(selectedChat._id, message);
-
-    socket.emit("sendMessage",
-      {
-        chatId: selectedChat._id,
-        senderId: loggedInUser._id,
-        receiverId,
-        text,
-        image: "",
-      },
-      (serverMessage) => {
-        if (serverMessage?._id) {
-          useChatStore.getState().updateMessage(selectedChat._id, tempId, serverMessage);
-        }
-      });
-
-    setText("");
-  };
-
-  const handleOpenCamera = () => setCameraOpen(true);
-  const handleCloseCamera = () => setCameraOpen(false);
-
-  const sendImageMessage = (base64Image) => {
-    if (!selectedChat?._id) return;
-
-    const tempId = "temp-" + Date.now();
-    const receiverId = otherUser?._id;
-
-    const message = {
-      _id: tempId,
-      chatId: selectedChat._id,
-      senderId: loggedInUser._id,
-      receiverId,
-      text: "",
-      image: base64Image,
-      createdAt: new Date().toISOString(),
-      status: "sending",
-    };
-
-    addMessage(selectedChat._id, message);
-
-    socket.emit("sendMessage",
-      {
-        chatId: selectedChat._id,
-        senderId: loggedInUser._id,
-        receiverId,
-        text: "",
-        image: base64Image,
-      },
-      (serverMessage) => {
-        if (serverMessage?._id) {
-          useChatStore.getState().updateMessage(selectedChat._id, tempId, serverMessage);
-        }
-      });
-  };
-
-  const handleCapture = (imageDataUrl) => {
-    sendImageMessage(imageDataUrl);
-    setCameraOpen(false);
-  };
-
-  const handleImageClick = () => fileInputRef.current?.click();
-
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => sendImageMessage(reader.result);
-    reader.readAsDataURL(file);
-
-    e.target.value = null;
-  };
+  
 
   return (
-    <div className='chat'>
-      {/* Top Bar */}
-      <div className="top">
-        <div className="user">
-          <img
-            src={otherUser?.img ? `http://localhost:5000/uploads/${otherUser.img}` : "/default-avatar.png"}
-            alt="User avatar"
-          />
-          <div className="texts">
-            <span>{selectedChat?.name ? selectedChat.name.charAt(0).toUpperCase() + selectedChat.name.slice(1) : "No User Selected"}</span>
-          </div>
-        </div>
+    <div className='container'>
+      {
+        isAuthenticated ?  (
+          <>
+            <List />
+            <Chat />
+            <Details /> 
+          </>
+        ) : (<Login />)
+      }
+      <Notification />
 
-        <div className="icons">
-          <img src="./phone.png" alt="Phone icon" />
-          <img src="./video.png" alt="Video icon" />
-          <img src="./info.png" alt="Info icon" />
-        </div>
-      </div>
-
-      {/* Messages */}
-      <div className="center">
-
-        {videoCallActive && remoteUser && (
-          <VideoCall
-            currentUserId={loggedInUser._id}
-            remoteUserId={remoteUser._id}
-            onCallEnd={() => setVideoCallActive(false)}
-          />
-        )}
-
-        {selectedChat && messages[selectedChat._id]?.map(message => {
-          const senderId = message.senderID || message.senderId;
-          const isOwnMessage = senderId === loggedInUser?._id;
-
-          return (
-            <div className={`message ${isOwnMessage ? 'own' : ''}`} key={message._id}>
-              <img
-                src={
-                  isOwnMessage
-                    ? (loggedInUser?.img ? `http://localhost:5000/uploads/${loggedInUser.img}` : "/default-avatar.png")
-                    : (otherUser?.img ? `http://localhost:5000/uploads/${otherUser.img}` : "/default-avatar.png")
-                }
-                alt="Sender avatar"
-              />
-              <div className="texts">
-                <small>{isOwnMessage ? 'You' : otherUser?.username || selectedChat?.name}</small>
-                {message.text && <p>{message.text}</p>}
-                {message.image && <img src={message.image} alt="Sent" className="message-image" />}
-                <span>{new Date(message.createdAt).toLocaleTimeString()}</span>
-              </div>
-            </div>
-          );
-        })}
-        <div ref={endRef}></div>
-      </div>
-
-      {/* Input & Controls */}
-      <div className="bottom">
-        <div className="icons">
-          <img src="./img.png" alt="Image upload icon" onClick={handleImageClick} />
-          <input
-            type="file"
-            accept="image/*"
-            style={{ display: "none" }}
-            ref={fileInputRef}
-            onChange={handleFileChange}
-          />
-          <img src="./camera.png" alt="Open camera" onClick={handleOpenCamera} />
-          <img src="./mic.png" alt="Microphone icon" />
-        </div>
-
-        <input
-          type="text"
-          value={text}
-          placeholder={selectedChat ? 'Type a message...' : 'Select a chat first'}
-          onChange={e => setText(e.target.value)}
-          disabled={!selectedChat}
-        />
-
-        <div className="emoji">
-          <img src="./emoji.png" alt="Emoji picker" onClick={() => setEmojiPickerOpen(prev => !prev)} />
-          {emojiPickerOpen && (
-            <div className="picker">
-              <EmojiPicker onEmojiClick={handleEmojiClick} />
-            </div>
-          )}
-        </div>
-
-        <button
-          className='sendButton'
-          onClick={handleSend}
-          disabled={!selectedChat || !text.trim()}
-        >
-          Send
-        </button>
-      </div>
-
-      {/* CameraCapture */}
-      {cameraOpen && <CameraCapture onCapture={handleCapture} onClose={handleCloseCamera} />}
     </div>
-  );
-};
+  )
+}
 
-export default Chat;
+export default App

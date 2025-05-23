@@ -6,14 +6,13 @@ const Details = () => {
 
   const { logoutUser } = useAuth();
   const loggedInUser = JSON.parse(localStorage.getItem('user'));
+  const navigate = useNavigate();
 
   const API_BASE_URL = import.meta.env.VITE_SOCKET_URL;
 
   const handleLogout = () => {
     logoutUser();
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.reload();
+    navigate("/login");
   };
 
   return (
