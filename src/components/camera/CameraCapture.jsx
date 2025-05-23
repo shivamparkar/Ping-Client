@@ -62,7 +62,6 @@ const CameraCapture = ({ onCapture, onClose }) => {
   };
 
   const handleClose = () => {
-    debugger;
     stopCamera();
     onClose();
   };
