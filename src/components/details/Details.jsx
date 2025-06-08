@@ -13,7 +13,7 @@ const Details = () => {
 
   const handleLogout = () => {
     logoutUser();
-    navigate("/login");
+    navigate("/");
   };
 
   return (
