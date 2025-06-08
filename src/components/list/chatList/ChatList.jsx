@@ -106,7 +106,7 @@ const ChatList = () => {
 
       {loading ? (
   
-  [...Array(5)].map((_, idx) => (
+  [...Array(1)].map((_, idx) => (
     <div key={idx} className="item skeleton-item">
       <Skeleton circle={true} height={50} width={50} />
       <div className="texts">

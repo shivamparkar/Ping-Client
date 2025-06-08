@@ -29,8 +29,13 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault()
         try {
-            await authenticate(credentials);
-            toast.success("Login successful!");
+            const response = await authenticate(credentials);
+
+            if (response.success) {
+                toast.success("Login successful!");
+            } else {
+                toast.error("Invalid credentials");
+            }
         } catch (error) {
             toast.error("Invalid credentials");
         }

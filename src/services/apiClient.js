@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_SOCKET_URL || `https://ping-api-cxa0.onrender.com`,
+  baseURL: "/api",
 });
 
 apiClient.interceptors.request.use(
